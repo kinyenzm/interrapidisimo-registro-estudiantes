@@ -1,0 +1,21 @@
+# .NET
+**/bin/
+**/obj/
+# El SDK de JavaScript (.esproj) crea "obj\Debug" como nombre literal en Linux/macOS
+obj\\*
+*.user
+*.suo
+.vs/
+.idea/
+appsettings.*.local.json
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+npm-debug.log*
+
+# Sistema
+Thumbs.db
+.DS_Store
