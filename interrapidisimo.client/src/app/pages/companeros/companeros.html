@@ -1,0 +1,60 @@
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-semibold">Mis compañeros</h1>
+  <div class="flex items-center gap-2">
+    @if (cargadoEn(); as hora) {
+      <span class="text-sm text-base-content/60">Actualizado a las {{ hora | date: 'mediumTime' }}</span>
+    }
+    <button type="button" class="btn btn-outline btn-primary btn-sm" [disabled]="cargando()" (click)="cargar()">
+      Actualizar
+    </button>
+  </div>
+</div>
+<p class="mb-4 mt-1 text-base-content/70">
+  Por privacidad solo se muestran nombres.
+</p>
+
+@if (error(); as mensaje) {
+  <div role="alert" class="alert alert-error alert-soft mb-4">
+    <span>{{ mensaje }}</span>
+  </div>
+}
+
+@if (clases(); as lista) {
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    @for (clase of lista; track clase.materiaId) {
+      <section class="card bg-base-100 shadow-sm" [attr.aria-labelledby]="'clase-' + clase.materiaId">
+        <div class="card-body p-4">
+          <div class="flex items-start justify-between gap-2">
+            <h2 class="font-semibold" [id]="'clase-' + clase.materiaId">{{ clase.materia }} · {{ clase.profesor }}</h2>
+            <span class="badge badge-primary badge-sm whitespace-nowrap">
+              {{ clase.companeros.length }} {{ clase.companeros.length === 1 ? 'compañero' : 'compañeros' }}
+            </span>
+          </div>
+          @if (clase.companeros.length > 0) {
+            <ul class="divide-y divide-base-200">
+              @for (nombre of clase.companeros; track $index) {
+                <li class="flex items-center gap-2 py-2">
+                  {{ nombre }}
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="text-sm text-base-content/60">Aún no tienes compañeros en esta clase.</p>
+          }
+        </div>
+      </section>
+    }
+  </div>
+} @else if (!error()) {
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+    @for (n of [1, 2, 3]; track n) {
+      <div class="card bg-base-100 shadow-sm">
+        <div class="card-body gap-3 p-4">
+          <div class="skeleton h-4 w-2/3"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+        </div>
+      </div>
+    }
+  </div>
+}

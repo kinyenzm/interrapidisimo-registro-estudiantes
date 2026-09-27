@@ -1,0 +1,94 @@
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-semibold">Estudiantes</h1>
+  <div class="flex items-center gap-2">
+    @if (cargadoEn(); as hora) {
+      <span class="text-sm text-base-content/60">Actualizado a las {{ hora | date: 'mediumTime' }}</span>
+    }
+    <button type="button" class="btn btn-outline btn-primary btn-sm" [disabled]="cargando()" (click)="cargar()">
+      Actualizar
+    </button>
+  </div>
+</div>
+<p class="mb-4 mt-1 text-base-content/70">
+  Registros en línea de todos los estudiantes. De las materias de los demás solo ves las clases que comparten contigo.
+</p>
+
+@if (error(); as mensaje) {
+  <div role="alert" class="alert alert-error alert-soft mb-4">
+    <span>{{ mensaje }}</span>
+  </div>
+}
+
+<section class="card bg-base-100 shadow-sm">
+  <div class="card-body">
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <label class="input w-full max-w-md" for="buscar-estudiante">
+        <span class="sr-only">Buscar por nombre o programa</span>
+        <input
+          id="buscar-estudiante"
+          type="search"
+          class="grow"
+          placeholder="Buscar por nombre o programa"
+          autocomplete="off"
+          [value]="filtro()"
+          (input)="buscar($event)"
+        />
+      </label>
+      <span class="badge badge-neutral" aria-live="polite">
+        {{ filtrados().length }} {{ filtrados().length === 1 ? 'estudiante' : 'estudiantes' }}
+      </span>
+    </div>
+
+    @if (filtrados().length > 0) {
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Estudiante</th>
+            <th scope="col" class="hidden md:table-cell">Programa</th>
+            <th scope="col" class="hidden whitespace-nowrap sm:table-cell">Créditos</th>
+            <th scope="col">Clases en común contigo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of filtrados(); track $index) {
+            <tr [class.bg-primary/10]="e.esPropio">
+              <td>
+                {{ e.nombre }}
+                @if (e.esPropio) {
+                  <span class="badge badge-primary badge-sm ms-1">Tú</span>
+                }
+                <div class="text-xs text-base-content/60 md:hidden">
+                  {{ e.programa }}<span class="sm:hidden"> · {{ e.creditosInscritos }}/{{ e.creditosPorPeriodo }} créditos</span>
+                </div>
+              </td>
+              <td class="hidden md:table-cell">{{ e.programa }}</td>
+              <td class="hidden whitespace-nowrap sm:table-cell">{{ e.creditosInscritos }}/{{ e.creditosPorPeriodo }}</td>
+              <td>
+                @if (e.esPropio) {
+                  <span class="block text-xs text-base-content/60">Tus materias</span>
+                }
+                <div class="flex flex-wrap gap-1">
+                  @for (materia of e.materiasEnComun; track $index) {
+                    <span class="badge badge-outline badge-sm h-auto whitespace-nowrap">{{ materia }}</span>
+                  } @empty {
+                    <span class="text-xs text-base-content/60">Ninguna</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else if (cargando()) {
+      <div class="flex flex-col gap-2" aria-busy="true">
+        <div class="skeleton h-6 w-full"></div>
+        <div class="skeleton h-6 w-full"></div>
+        <div class="skeleton h-6 w-full"></div>
+      </div>
+    } @else if (filtro()) {
+      <div class="py-8 text-center text-base-content/60">
+        Ningún estudiante coincide con «{{ filtro() }}».
+      </div>
+    }
+  </div>
+</section>

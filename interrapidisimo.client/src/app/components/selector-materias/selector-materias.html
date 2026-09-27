@@ -1,0 +1,55 @@
+<div class="card sticky top-2 z-10 mb-4 bg-base-100 shadow-sm">
+  <div class="card-body gap-3 p-4">
+    <p class="font-semibold" aria-live="polite" aria-atomic="true">
+      Materias {{ seleccion().length }}/{{ catalogo().reglas.materiasPorEstudiante }} · Créditos {{ creditos() }}/{{ catalogo().reglas.creditosPorPeriodo }}
+    </p>
+    <progress
+      class="progress w-full"
+      [class.progress-warning]="!completa()"
+      [class.progress-success]="completa()"
+      aria-label="Créditos elegidos"
+      [value]="creditos()"
+      [max]="catalogo().reglas.creditosPorPeriodo"
+    ></progress>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+  @for (profesor of catalogo().profesores; track profesor.id) {
+    <section class="card bg-base-100 shadow-sm" role="group" [attr.aria-labelledby]="'profesor-' + profesor.id">
+      <div class="card-body gap-2 p-4">
+        <h3 class="flex items-center gap-2 font-semibold" [id]="'profesor-' + profesor.id">
+          {{ profesor.nombre }}
+        </h3>
+        @for (materia of profesor.materias; track materia.id) {
+          @let materiaElegida = elegida(materia.id);
+          @let motivoMateria = motivo(profesor, materia.id);
+          <div>
+            <label
+              class="flex items-center gap-3 rounded-box border px-3 py-2.5 transition-colors"
+              [class]="claseOpcion(materiaElegida, motivoMateria !== null)"
+              [for]="'materia-' + materia.id"
+            >
+              <input
+                type="checkbox"
+                class="checkbox checkbox-primary checkbox-sm"
+                [id]="'materia-' + materia.id"
+                [checked]="materiaElegida"
+                [disabled]="deshabilitado() || motivoMateria !== null"
+                [attr.aria-describedby]="motivoMateria ? 'motivo-materia-' + materia.id : null"
+                (change)="alternar(materia.id)"
+              />
+              <span class="grow">{{ materia.nombre }}</span>
+              <span class="badge badge-ghost badge-sm whitespace-nowrap">{{ materia.creditos }} créditos</span>
+            </label>
+            @if (motivoMateria) {
+              <p class="mt-1 text-xs text-base-content/70" [id]="'motivo-materia-' + materia.id">
+                {{ motivoMateria }}
+              </p>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

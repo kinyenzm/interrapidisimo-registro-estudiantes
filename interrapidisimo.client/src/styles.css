@@ -1,0 +1,5 @@
+/* Tailwind CSS 4 + daisyUI 5. */
+@import 'tailwindcss' source('.');
+@plugin 'daisyui' {
+  themes: corporate --default;
+}

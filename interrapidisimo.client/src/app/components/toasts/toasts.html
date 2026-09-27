@@ -1,0 +1,10 @@
+<div class="toast toast-end toast-bottom z-50" aria-live="polite">
+  @for (n of servicio.notificaciones(); track n.id) {
+    <div class="alert shadow-lg" [class]="clases[n.tipo]" [attr.role]="n.tipo === 'error' ? 'alert' : 'status'">
+      <span>{{ n.mensaje }}</span>
+      <button type="button" class="btn btn-ghost btn-xs btn-circle" aria-label="Cerrar notificación" (click)="servicio.cerrar(n.id)">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+  }
+</div>

@@ -24,4 +24,11 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.9" />
   </ItemGroup>
 
+  <!-- Solo en Release: dotnet publish compila la SPA y la copia a wwwroot. En Debug la sirve ng serve vía SpaProxy. -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <ProjectReference Include="..\interrapidisimo.client\interrapidisimo.client.esproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

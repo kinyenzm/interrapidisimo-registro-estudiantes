@@ -1,0 +1,55 @@
+<header class="bg-primary text-primary-content shadow-sm">
+  <nav class="navbar mx-auto max-w-6xl px-4" aria-label="Navegación principal">
+    <div class="flex-1">
+      <a class="btn btn-ghost px-2 text-lg font-semibold text-primary-content" routerLink="/" (click)="cerrarMenu()">
+        Registro de Estudiantes
+      </a>
+    </div>
+    <div class="flex flex-none items-center gap-2">
+      @if (usuario(); as u) {
+        <ul class="menu menu-horizontal hidden flex-nowrap gap-1 whitespace-nowrap md:flex">
+          <li><a routerLink="/mi-registro" routerLinkActive="bg-primary-content/20 font-semibold" ariaCurrentWhenActive="page">Mi registro</a></li>
+          <li><a routerLink="/estudiantes" routerLinkActive="bg-primary-content/20 font-semibold" ariaCurrentWhenActive="page">Estudiantes</a></li>
+          <li><a routerLink="/companeros" routerLinkActive="bg-primary-content/20 font-semibold" ariaCurrentWhenActive="page">Mis compañeros</a></li>
+        </ul>
+        <span class="hidden whitespace-nowrap text-sm lg:inline">Hola, {{ u.nombre }}</span>
+        <button
+          type="button"
+          class="btn btn-outline btn-sm hidden border-primary-content/70 text-primary-content hover:bg-primary-content hover:text-primary md:inline-flex"
+          (click)="cerrarSesion()"
+        >
+          Cerrar sesión
+        </button>
+      } @else {
+        <ul class="menu menu-horizontal hidden flex-nowrap gap-1 whitespace-nowrap md:flex">
+          <li><a routerLink="/login" routerLinkActive="bg-primary-content/20 font-semibold" ariaCurrentWhenActive="page">Iniciar sesión</a></li>
+          <li><a routerLink="/registro" routerLinkActive="bg-primary-content/20 font-semibold" ariaCurrentWhenActive="page">Registrarse</a></li>
+        </ul>
+      }
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm text-primary-content md:hidden"
+        aria-controls="menu-movil"
+        [attr.aria-expanded]="menuAbierto()"
+        aria-label="Abrir o cerrar el menú"
+        (click)="alternarMenu()"
+      >
+        {{ menuAbierto() ? 'Cerrar' : 'Menú' }}
+      </button>
+    </div>
+  </nav>
+  @if (menuAbierto()) {
+    <ul id="menu-movil" class="menu w-full px-4 pb-3 md:hidden">
+      @if (usuario(); as u) {
+        <li class="menu-title text-primary-content/80">Hola, {{ u.nombre }}</li>
+        <li><a routerLink="/mi-registro" routerLinkActive="bg-primary-content/20 font-semibold" (click)="cerrarMenu()">Mi registro</a></li>
+        <li><a routerLink="/estudiantes" routerLinkActive="bg-primary-content/20 font-semibold" (click)="cerrarMenu()">Estudiantes</a></li>
+        <li><a routerLink="/companeros" routerLinkActive="bg-primary-content/20 font-semibold" (click)="cerrarMenu()">Mis compañeros</a></li>
+        <li><button type="button" (click)="cerrarSesion()">Cerrar sesión</button></li>
+      } @else {
+        <li><a routerLink="/login" routerLinkActive="bg-primary-content/20 font-semibold" (click)="cerrarMenu()">Iniciar sesión</a></li>
+        <li><a routerLink="/registro" routerLinkActive="bg-primary-content/20 font-semibold" (click)="cerrarMenu()">Registrarse</a></li>
+      }
+    </ul>
+  }
+</header>

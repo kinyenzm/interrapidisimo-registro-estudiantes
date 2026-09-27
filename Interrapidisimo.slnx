@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="interrapidisimo.client/interrapidisimo.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="Interrapidisimo.Server/Interrapidisimo.Server.csproj" />
 </Solution>

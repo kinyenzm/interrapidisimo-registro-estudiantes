@@ -1,0 +1,165 @@
+<h1 class="text-2xl font-semibold">Crear mi registro</h1>
+<p class="mb-4 mt-1 text-base-content/70">
+  Completa tus datos, elige tu programa de créditos y tus 3 materias. ¿Ya tienes registro?
+  <a class="link link-primary" routerLink="/login">Inicia sesión</a>.
+</p>
+
+@if (errorGeneral(); as mensaje) {
+  <div role="alert" class="alert alert-error alert-soft mb-4">
+    <span>{{ mensaje }}</span>
+  </div>
+}
+
+<form [formGroup]="formulario" (ngSubmit)="crear()" novalidate>
+  <section class="card mb-6 bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">1. Tus datos</h2>
+      <div class="grid gap-x-6 md:grid-cols-2">
+        <div class="fieldset">
+          <label for="registro-nombre" class="fieldset-legend">Nombre completo</label>
+          <input
+            id="registro-nombre"
+            class="input w-full"
+            formControlName="nombre"
+            autocomplete="name"
+            maxlength="100"
+            [class.input-error]="invalido('nombre')"
+            aria-describedby="registro-nombre-error"
+          />
+          @if (invalido('nombre')) {
+            <p id="registro-nombre-error" class="label text-error">Escribe tu nombre (máximo 100 caracteres).</p>
+          }
+        </div>
+        <div class="fieldset">
+          <label for="registro-email" class="fieldset-legend">Correo electrónico</label>
+          <input
+            id="registro-email"
+            type="email"
+            class="input w-full"
+            formControlName="email"
+            autocomplete="email"
+            [class.input-error]="invalido('email')"
+            aria-describedby="registro-email-error"
+          />
+          @if (invalido('email')) {
+            <p id="registro-email-error" class="label text-error">
+              {{ formulario.controls.email.getError('servidor') ?? 'Escribe un correo electrónico válido.' }}
+            </p>
+          }
+        </div>
+        <div class="fieldset">
+          <label for="registro-password" class="fieldset-legend">Contraseña</label>
+          <div class="join w-full">
+            <input
+              id="registro-password"
+              class="input join-item w-full"
+              formControlName="password"
+              autocomplete="new-password"
+              [type]="verPassword() ? 'text' : 'password'"
+              [class.input-error]="invalido('password')"
+              aria-describedby="registro-password-ayuda registro-password-error"
+            />
+            <button
+              type="button"
+              class="btn join-item"
+              [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-pressed]="verPassword()"
+              (click)="verPassword.set(!verPassword())"
+            >
+              {{ verPassword() ? 'Ocultar' : 'Ver' }}
+            </button>
+          </div>
+          @if (invalido('password')) {
+            <p id="registro-password-error" class="label text-error">La contraseña debe tener al menos 8 caracteres.</p>
+          }
+          <p id="registro-password-ayuda" class="label">Mínimo 8 caracteres.</p>
+        </div>
+        <div class="fieldset">
+          <label for="registro-confirmacion" class="fieldset-legend">Confirma la contraseña</label>
+          <input
+            id="registro-confirmacion"
+            class="input w-full"
+            formControlName="confirmacion"
+            autocomplete="new-password"
+            [type]="verPassword() ? 'text' : 'password'"
+            [class.input-error]="invalido('confirmacion')"
+            aria-describedby="registro-confirmacion-error"
+          />
+          @if (invalido('confirmacion')) {
+            <p id="registro-confirmacion-error" class="label text-error">Las contraseñas no coinciden.</p>
+          }
+        </div>
+        <div class="fieldset md:col-span-2">
+          <label for="registro-programa" class="fieldset-legend">Programa de créditos</label>
+          <select
+            id="registro-programa"
+            class="select w-full"
+            formControlName="programaId"
+            [class.select-error]="invalido('programaId')"
+            aria-describedby="registro-programa-descripcion registro-programa-error"
+          >
+            <option [ngValue]="0" disabled>Selecciona tu programa…</option>
+            @for (p of catalogo()?.programas ?? []; track p.id) {
+              <option [ngValue]="p.id">{{ p.nombre }}</option>
+            }
+          </select>
+          @if (invalido('programaId')) {
+            <p id="registro-programa-error" class="label text-error">Selecciona un programa de créditos.</p>
+          }
+          <p id="registro-programa-descripcion" class="label">
+            @if (programa(); as p) {
+              {{ p.descripcion }}
+            } @else if (catalogo(); as c) {
+              Todos los programas son por créditos: {{ c.reglas.creditosPorPeriodo }} créditos por periodo.
+            }
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card mb-6 bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">2. Tus materias</h2>
+      @if (catalogo(); as c) {
+        <p class="mb-2 text-sm text-base-content/70">
+          Elige exactamente {{ c.reglas.materiasPorEstudiante }} materias ({{ c.reglas.creditosPorPeriodo }} créditos). No puedes
+          tener dos materias con el mismo profesor.
+        </p>
+
+        @if (errorSeleccion(); as mensaje) {
+          <div role="alert" class="alert alert-warning mb-2">
+            <span>{{ mensaje }}</span>
+          </div>
+        }
+
+        <app-selector-materias
+          [catalogo]="c"
+          [deshabilitado]="guardando()"
+          [seleccion]="seleccion()"
+          (seleccionChange)="cambiarSeleccion($event)"
+        />
+      } @else if (errorCatalogo(); as mensaje) {
+        <div role="alert" class="alert alert-error alert-soft mb-2">
+          <span>{{ mensaje }}</span>
+          <button type="button" class="btn btn-sm" (click)="cargarCatalogo()">Reintentar</button>
+        </div>
+      } @else {
+        <p class="mb-2 text-sm text-base-content/70">Cargando…</p>
+      }
+    </div>
+  </section>
+
+  <div class="flex flex-wrap items-center justify-end gap-3">
+    @if (faltante(); as texto) {
+      <span class="text-base-content/70" aria-live="polite">{{ texto }}</span>
+    }
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="guardando()">
+      @if (guardando()) {
+        <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>Creando…
+      } @else {
+        Crear mi registro
+      }
+    </button>
+  </div>
+</form>

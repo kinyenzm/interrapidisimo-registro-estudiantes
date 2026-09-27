@@ -1,0 +1,39 @@
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-semibold">Cambiar materias</h1>
+  <a class="link link-primary" routerLink="/mi-registro">Volver a mi registro</a>
+</div>
+
+@if (catalogo(); as c) {
+  <p class="mb-4 mt-1 text-base-content/70">
+    Tu selección debe tener exactamente {{ c.reglas.materiasPorEstudiante }} materias ({{ c.reglas.creditosPorPeriodo }} créditos), sin repetir profesor.
+    Para cambiar una materia, primero quita otra.
+  </p>
+
+  @if (error(); as mensaje) {
+    <div role="alert" class="alert alert-error alert-soft mb-4">
+      <span>{{ mensaje }}</span>
+    </div>
+  }
+
+  <app-selector-materias [catalogo]="c" [deshabilitado]="guardando()" [(seleccion)]="seleccion" />
+
+  <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
+    @if (faltante(); as texto) {
+      <span class="me-auto text-base-content/70" aria-live="polite">{{ texto }}</span>
+    }
+    <button type="button" class="btn btn-primary" [disabled]="!puedeGuardar()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>Guardando…
+      } @else {
+        Guardar
+      }
+    </button>
+  </div>
+} @else if (errorCarga(); as mensaje) {
+  <div role="alert" class="alert alert-error alert-soft mb-4 mt-1">
+    <span>{{ mensaje }}</span>
+    <button type="button" class="btn btn-sm" (click)="cargar()">Reintentar</button>
+  </div>
+} @else {
+  <p class="mb-4 mt-1 text-base-content/70">Cargando…</p>
+}

@@ -1,0 +1,83 @@
+<div class="mx-auto grid max-w-5xl gap-6 lg:grid-cols-5">
+  <div class="card bg-base-100 shadow-sm lg:col-span-3">
+    <div class="card-body">
+      <h1 class="card-title text-2xl">Iniciar sesión</h1>
+
+      @if (error(); as mensaje) {
+        <div role="alert" class="alert alert-error alert-soft">
+          <span>{{ mensaje }}</span>
+        </div>
+      }
+
+      <form class="flex flex-col gap-1" [formGroup]="formulario" (ngSubmit)="iniciarSesion()" novalidate>
+        <div class="fieldset">
+          <label for="login-email" class="fieldset-legend">Correo electrónico</label>
+          <input
+            id="login-email"
+            type="email"
+            class="input w-full"
+            formControlName="email"
+            autocomplete="username"
+            [class.input-error]="invalido('email')"
+            aria-describedby="login-email-error"
+          />
+          @if (invalido('email')) {
+            <p id="login-email-error" class="label text-error">Escribe un correo electrónico válido.</p>
+          }
+        </div>
+        <div class="fieldset">
+          <label for="login-password" class="fieldset-legend">Contraseña</label>
+          <div class="join w-full">
+            <input
+              id="login-password"
+              class="input join-item w-full"
+              formControlName="password"
+              autocomplete="current-password"
+              [type]="verPassword() ? 'text' : 'password'"
+              [class.input-error]="invalido('password')"
+              aria-describedby="login-password-error"
+            />
+            <button
+              type="button"
+              class="btn join-item"
+              [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-pressed]="verPassword()"
+              (click)="verPassword.set(!verPassword())"
+            >
+              {{ verPassword() ? 'Ocultar' : 'Ver' }}
+            </button>
+          </div>
+          @if (invalido('password')) {
+            <p id="login-password-error" class="label text-error">Escribe tu contraseña.</p>
+          }
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 w-full" [disabled]="guardando()">
+          @if (guardando()) {
+            <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>Entrando…
+          } @else {
+            Entrar
+          }
+        </button>
+      </form>
+
+      <p class="mt-2 text-center text-sm">
+        ¿No tienes registro? <a class="link link-primary" routerLink="/registro">Regístrate</a>
+      </p>
+      <p class="text-center text-sm text-base-content/70">Usuario de ejemplo: ana.perez@example.com / Demo123*</p>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm lg:col-span-2">
+    <div class="card-body">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-base-content/60">Sobre el programa</h2>
+      <ul class="list-disc space-y-2 ps-5 text-sm">
+        <li>Te inscribes en un programa de créditos de 9 créditos por periodo.</li>
+        <li>Hay 10 materias, cada una de 3 créditos.</li>
+        <li>Eliges exactamente 3 materias.</li>
+        <li>Hay 5 profesores y cada uno dicta 2 materias.</li>
+        <li>No puedes tener clases con el mismo profesor más de una vez.</li>
+        <li>Ves en línea los registros de los demás y los nombres de tus compañeros de clase.</li>
+      </ul>
+    </div>
+  </div>
+</div>

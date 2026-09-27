@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.1184077">
+  <PropertyGroup>
+    <!-- Visual Studio lo usa para "Iniciar": ng serve en :4200 con el proxy hacia la API. -->
+    <StartupCommand>npm start</StartupCommand>
+    <!-- Al compilar se instalan las dependencias (npm install) si faltan; el build de Angular solo se hace al publicar. -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Salida de ng build que dotnet publish copia al wwwroot del servidor. -->
+    <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist\client\browser\</PublishAssetsDirectory>
+  </PropertyGroup>
+</Project>
